@@ -11,7 +11,7 @@ scanner' :: String -> BigNumber
 scanner' xs = reverse [digitToInt x | x <- xs]
 
 scanner :: String -> BigNumber
-scanner x  | head x == '-' = reverse (changeSign (map(\x -> read [x]::Int) (tail x)))
+scanner x  | head x == '-' = reverse (changeSign (map(\x -> read [x]) (tail x)))
            | otherwise = scanner' x
 
 changeSign :: BigNumber -> BigNumber

@@ -1,3 +1,5 @@
+import BigNumber
+
 fibRec :: (Integral a) => a -> a
 fibRec n
     | n == 0 = 0 
