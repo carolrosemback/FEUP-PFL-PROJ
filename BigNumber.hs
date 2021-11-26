@@ -1,20 +1,31 @@
 module BigNumber (BigNumber (..),
                   scanner,
-                  output) where
+                  output,
+                  changeSign) where
 
 import Data.Char(digitToInt)
 type BigNumber = [Int]
 
 --2.2
+scanner' :: String -> BigNumber
+scanner' xs = reverse [digitToInt x | x <- xs]
+
 scanner :: String -> BigNumber
-scanner input = reverse [digitToInt a | a <- input]
+scanner x  | head x == '-' = reverse (changeSign (map(\x -> read [x]::Int) (tail x)))
+           | otherwise = scanner' x
+
+changeSign :: BigNumber -> BigNumber
+changeSign (x:xs) = (-x):xs
 
 --2.3 
 output :: BigNumber -> String
-output numb =  reverse (concatMap show numb)
+output a = concatMap show (reverse a)
+
 
 --2.4
 --somaBN :: BigNumber -> BigNumber -> BigNumber
+
+
 
 --2.5
 --subBN ::BigNumber -> BigNumber -> BigNumber
