@@ -79,6 +79,7 @@ multBN' n1 n2 acc
 
 divBN :: BigNumber -> BigNumber -> (BigNumber, BigNumber)
 divBN dividend divisor 
+    | divisor == [0] = error "it's not possible to divide a number by 0"
     | equalOrBiggerBN dividend divisor = divBN' dividend divisor divisor [1]
     | otherwise = ([0], dividend)
 
@@ -86,3 +87,33 @@ divBN' :: BigNumber -> BigNumber ->BigNumber-> BigNumber-> (BigNumber, BigNumber
 divBN' dividend divisor acc quotient
     | head (subBN dividend (somaBN acc divisor)) < 0 = (quotient, (subBN dividend acc))
     | otherwise = divBN' dividend divisor (somaBN acc divisor) (somaBN quotient [1])
+
+fibRecBN :: BigNumber -> BigNumber
+fibRecBN n = fibRecBN' n [0] [1]
+
+fibRecBN' :: BigNumber -> BigNumber -> BigNumber -> BigNumber
+fibRecBN' n fib_2 fib_1
+    | n == [0] = fib_2
+    | n == [1] = fib_1
+    | otherwise = fibRecBN' (somaBN n [-1]) fib_1 (somaBN fib_2 fib_1)
+
+fibListaBN :: BigNumber -> BigNumber
+fibListaBN n = last (fibListaBN' n 1 [[0],[1]])
+
+fibListaBN':: BigNumber->Int->[BigNumber]->[BigNumber] 
+fibListaBN' n count lis
+    | head (subBN n [2]) < 0 = lis
+    | output n == show count = lis
+    | otherwise = fibListaBN' n (count + 1) (lis ++ [somaBN (lis!!count) (lis!!(count-1))])
+
+bnToInteger:: BigNumber -> Int
+bnToInteger n = bnToInteger' n 0
+
+bnToInteger':: BigNumber -> Int->Int
+bnToInteger' n acc
+    | length n == 0 = acc
+    | otherwise = bnToInteger' (tail n) (10^(length n -1) * (head n) + acc)
+
+fibListaInfinitaBN :: BigNumber -> BigNumber
+fibListaInfinitaBN n = fibs!!(bnToInteger n)
+    where fibs = [0] : [1] : zipWith (somaBN) fibs (tail fibs)

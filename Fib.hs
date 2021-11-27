@@ -1,10 +1,14 @@
 import BigNumber
 
 fibRec :: (Integral a) => a -> a
-fibRec n
-    | n == 0 = 0 
-    | n == 1 = 1
-    | otherwise = fibRec (n-1) + fibRec(n-2)
+fibRec n = fibRec' n 0 1
+
+fibRec' :: (Integral a) => a -> a -> a -> a
+fibRec' n fib_2 fib_1
+    | n == 0 = fib_2
+    | n == 1 = fib_1
+    | otherwise = fibRec' (n -1) fib_1 (fib_2 + fib_1)
+
 
 fibLista :: (Integral a) => Int -> a
 fibLista i = (fibLista' i 1 [0,1])!!i
@@ -19,4 +23,3 @@ fibLista' n c l
 fibListaInfinita :: (Integral a) => Int -> a
 fibListaInfinita i = fibs!!i
     where fibs = 0 : 1 : zipWith (+) fibs (tail fibs)
-
