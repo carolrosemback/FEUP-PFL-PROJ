@@ -9,23 +9,24 @@ type BigNumber = [Int]
 
 --2.2
 scanner' :: String -> BigNumber
-scanner' xs = reverse [digitToInt x | x <- xs]
+scanner' xs = [digitToInt x | x <- xs]
 
 scanner :: String -> BigNumber
-scanner x  | head x == '-' = reverse (changeSign (map(\x -> read [x]) (tail x)))
+scanner x  | head x == '-' = changeSign (map(\x -> read [x]) (tail x))
            | otherwise = scanner' x
 
 changeSign :: BigNumber -> BigNumber
-changeSign (x:xs) = (-x):xs
+changeSign xs = [- x | x <- xs]
 
 --2.3 
 output :: BigNumber -> String
-output a = concatMap show (reverse a)
-
+output a 
+    | head a < 0 = "-" ++ output (changeSign a)
+    | otherwise = concatMap show a
 
 --2.4
 somaBN :: BigNumber -> BigNumber -> BigNumber
-somaBN n1 n2 = reverse (somaBN' n1 n2 0 [])
+somaBN n1 n2 = somaBN' (reverse n1) (reverse n2) 0 []
 
 somaBN' :: BigNumber -> BigNumber -> Int -> BigNumber -> BigNumber
 somaBN' n1 n2 decimal_seguinte res =
@@ -46,12 +47,22 @@ somaBN' n1 n2 decimal_seguinte res =
             somaBN' (tail n1) (tail n2) (div (decimal_seguinte + head n1 + head n2) 10) ((mod (decimal_seguinte + head n1 + head n2) 10):res)
         )
 
-
 --2.5
---subBN ::BigNumber -> BigNumber -> BigNumber
-
---2.6
---mulBN :: BigNumber -> BigNumber -> BigNumber
-
---2.7
---divBN :: BigNumber -> BigNumber -> (BigNumber, BigNumber)
+equalOrBiggerBN :: BigNumber -> BigNumber -> Bool
+equalOrBiggerBN n1 n2 
+    | n1 == [] && n2 == [] = True
+    | head n1 > 0 && head n2 < 0 = True --n2 negative n1 positive
+    | head n1 < 0 && head n2 > 0 = False --n1 negative n2 positive
+    | head n1 > 0 && head n2 > 0 && length n1 > length n2 = True --both positive, n1 larger
+    | head n1 > 0 && head n2 > 0 && length n1 < length n2 = False --both positive, n2 larger
+    | head n1 < 0 && head n2 < 0 && length n1 > length n2 = False --both negative, n1 larger
+    | head n1 < 0 && head n2 < 0 && length n1 < length n2 = True --both negative, n2 larger
+    | length n1 == length n2 && head n1 > head n2 = True --both positive, same size
+    | length n1 == length n2 && head n1 < head n2 = False --both positive, same size
+    | otherwise = equalOrBiggerBN (tail n1) (tail n2)
+    
+subBN ::BigNumber -> BigNumber -> BigNumber
+subBN n1 n2 = 
+    if(equalOrBiggerBN n1 n2) then somaBN n1 (changeSign n2)
+        else
+    changeSign(somaBN n2 (changeSign n1))
