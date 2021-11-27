@@ -26,7 +26,12 @@ output a
 
 --2.4
 somaBN :: BigNumber -> BigNumber -> BigNumber
-somaBN n1 n2 = somaBN' (reverse n1) (reverse n2) 0 []
+somaBN n1 n2
+    | head n1 > 0 && head n2 > 0 = somaBN' (reverse n1) (reverse n2) 0 []
+    | head n1 < 0 && head n2 < 0 = changeSign (somaBN (changeSign n1) (changeSign n2))
+    | head n1 > 0 && head n2 < 0 && (equalOrBiggerBN (changeSign n2) n1) = changeSign(somaBN (changeSign n2) (changeSign n1))
+    | head n1 < 0 && head n2 > 0 && (equalOrBiggerBN (changeSign n1) n2) = changeSign(somaBN (changeSign n1) (changeSign n2))
+    | otherwise = somaBN' (reverse n1) (reverse n2) 0 []
 
 somaBN' :: BigNumber -> BigNumber -> Int -> BigNumber -> BigNumber
 somaBN' n1 n2 decimal_seguinte res 
@@ -36,11 +41,12 @@ somaBN' n1 n2 decimal_seguinte res
     | n1 /= [] && n2 == [] = somaBN' (tail n1) n2 (div (decimal_seguinte + head n1) 10) ((mod (decimal_seguinte + head n1) 10):res)
     | n1 /= [] && n2 /= [] = somaBN' (tail n1) (tail n2) (div (decimal_seguinte + head n1 + head n2) 10) ((mod (decimal_seguinte + head n1 + head n2) 10):res)
 
-remove0 :: BigNumber-> BigNumber
+remove0 :: BigNumber -> BigNumber
 remove0 n1 
     | n1 == [] = [0]
     | head n1 == 0 = remove0 (tail n1)
     | otherwise = n1
+
 --2.5
 equalOrBiggerBN :: BigNumber -> BigNumber -> Bool
 equalOrBiggerBN n1 n2 
@@ -56,10 +62,7 @@ equalOrBiggerBN n1 n2
     | otherwise = equalOrBiggerBN (tail n1) (tail n2)
     
 subBN ::BigNumber -> BigNumber -> BigNumber
-subBN n1 n2 = 
-    if(equalOrBiggerBN n1 n2) then somaBN n1 (changeSign n2)
-        else
-    changeSign(somaBN n2 (changeSign n1))
+subBN n1 n2 = somaBN n1 (changeSign n2)
 
 multBN ::BigNumber -> BigNumber -> BigNumber
 multBN n1 n2 
@@ -72,4 +75,14 @@ multBN'::BigNumber -> BigNumber -> BigNumber ->BigNumber
 multBN' n1 n2 acc 
     | n2 == [0] = acc
     | n2 == [] = acc
-    | otherwise = multBN' n1 (subBN n2 [1]) (somaBN n1 acc)
+    | otherwise = multBN' n1 (somaBN n2 [-1]) (somaBN n1 acc)
+
+divBN :: BigNumber -> BigNumber -> (BigNumber, BigNumber)
+divBN dividend divisor 
+    | equalOrBiggerBN dividend divisor = divBN' dividend divisor divisor [1]
+    | otherwise = ([0], dividend)
+
+divBN' :: BigNumber -> BigNumber ->BigNumber-> BigNumber-> (BigNumber, BigNumber)
+divBN' dividend divisor acc quotient
+    | head (subBN dividend (somaBN acc divisor)) < 0 = (quotient, (subBN dividend acc))
+    | otherwise = divBN' dividend divisor (somaBN acc divisor) (somaBN quotient [1])
