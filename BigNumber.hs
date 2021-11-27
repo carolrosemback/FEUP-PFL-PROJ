@@ -1,3 +1,4 @@
+--2.1
 module BigNumber (BigNumber (..),
                   scanner,
                   output,
@@ -23,8 +24,27 @@ output a = concatMap show (reverse a)
 
 
 --2.4
---somaBN :: BigNumber -> BigNumber -> BigNumber
+somaBN :: BigNumber -> BigNumber -> BigNumber
+somaBN n1 n2 = reverse (somaBN' n1 n2 0 [])
 
+somaBN' :: BigNumber -> BigNumber -> Int -> BigNumber -> BigNumber
+somaBN' n1 n2 decimal_seguinte res =
+    if n1 == [] then
+        (if n2 == [] then
+            (if decimal_seguinte == 0 then
+                res
+                    else
+                decimal_seguinte:res
+            )
+                else
+            somaBN' n1 (tail n2) (div (decimal_seguinte + head n2) 10) ((mod (decimal_seguinte + head n2) 10):res)
+        )
+    else
+        (if n2 == [] then
+            somaBN' (tail n1) n2 (div (decimal_seguinte + head n1) 10) ((mod (decimal_seguinte + head n1) 10):res)
+                else
+            somaBN' (tail n1) (tail n2) (div (decimal_seguinte + head n1 + head n2) 10) ((mod (decimal_seguinte + head n1 + head n2) 10):res)
+        )
 
 
 --2.5
