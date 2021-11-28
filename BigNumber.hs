@@ -111,11 +111,8 @@ bnToInteger':: BigNumber -> Int->Int
 bnToInteger' n acc
     | length n == 0 = acc
     | otherwise = bnToInteger' (tail n) (10^(length n -1) * (head n) + acc)
-<<<<<<< HEAD
 
 -- 5
 safeDivBN :: BigNumber -> BigNumber -> Maybe (BigNumber, BigNumber)
 safeDivBN x y | y == [0] =  Nothing
               | otherwise = Just (divBN x y)
-=======
->>>>>>> e776195d3b5cbca2b2fd734342e8d070cdeab952
