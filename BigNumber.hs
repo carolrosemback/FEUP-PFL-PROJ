@@ -12,7 +12,8 @@ module BigNumber (BigNumber (..),
                   divBN,
                   divBN',
                   bnToInteger,
-                  bnToInteger') where
+                  bnToInteger', 
+                  safeDivBN) where
 
 import Data.Char(digitToInt)
 type BigNumber = [Int]
