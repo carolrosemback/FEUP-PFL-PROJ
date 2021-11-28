@@ -25,7 +25,10 @@ fibListaInfinita i = fibs!!i
     where fibs = 0 : 1 : zipWith (+) fibs (tail fibs)
 
 fibRecBN :: BigNumber -> BigNumber
-fibRecBN n = fibRecBN' n [0] [1]
+fibRecBN n 
+    | invalidBigNumber n = error "Please introduce a valid Big Number"
+    | head n < 0 = error "negative numbers are not part of the fibonacci sequence"    
+    | otherwise = fibRecBN' n [0] [1]
 
 fibRecBN' :: BigNumber -> BigNumber -> BigNumber -> BigNumber
 fibRecBN' n fib_2 fib_1
@@ -34,7 +37,10 @@ fibRecBN' n fib_2 fib_1
     | otherwise = fibRecBN' (somaBN n [-1]) fib_1 (somaBN fib_2 fib_1)
 
 fibListaBN :: BigNumber -> BigNumber
-fibListaBN n = last (fibListaBN' n 1 [[0],[1]])
+fibListaBN n 
+    | invalidBigNumber n = error "Please introduce a valid Big Number"
+    | head n < 0 = error "negative numbers are not part of the fibonacci sequence"  
+    | otherwise = last (fibListaBN' n 1 [[0],[1]])
 
 fibListaBN':: BigNumber->Int->[BigNumber]->[BigNumber] 
 fibListaBN' n count lis
@@ -43,5 +49,8 @@ fibListaBN' n count lis
     | otherwise = fibListaBN' n (count + 1) (lis ++ [somaBN (lis!!count) (lis!!(count-1))])
 
 fibListaInfinitaBN :: BigNumber -> BigNumber
-fibListaInfinitaBN n = fibs!!(bnToInteger n)
+fibListaInfinitaBN n 
+    | invalidBigNumber n = error "Please introduce a valid Big Number"
+    | head n < 0 = error "negative numbers are not part of the fibonacci sequence"  
+    | otherwise = fibs!!(bnToInteger n)
     where fibs = [0] : [1] : zipWith (somaBN) fibs (tail fibs)

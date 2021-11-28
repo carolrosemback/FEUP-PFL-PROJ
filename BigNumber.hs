@@ -12,7 +12,11 @@ module BigNumber (BigNumber (..),
                   divBN,
                   divBN',
                   bnToInteger,
-                  bnToInteger') where
+                  bnToInteger',
+                  invalidBigNumber,
+                  sameSignPos,
+                  sameSignNeg,
+                  safeDivBN) where
 
 import Data.Char(digitToInt)
 type BigNumber = [Int]
@@ -34,9 +38,29 @@ output a
     | head a < 0 = "-" ++ output (changeSign a)
     | otherwise = concatMap show a
 
+sameSignPos::BigNumber -> Bool
+sameSignPos n
+    | n == [] = True
+    | head n >= 0 = sameSignPos (tail n)
+    | otherwise = False
+
+sameSignNeg::BigNumber -> Bool
+sameSignNeg n
+    | n == [] = True
+    | head n <= 0 = sameSignNeg (tail n)
+    | otherwise = False
+
+invalidBigNumber:: BigNumber -> Bool
+invalidBigNumber n 
+    | n == [] = True
+    | sameSignPos n = (read (output n)::Int) /= bnToInteger n
+    | sameSignNeg n = (read (output n)::Int) /= bnToInteger n
+    | otherwise = True
+
 --2.4
 somaBN :: BigNumber -> BigNumber -> BigNumber
 somaBN n1 n2
+    | invalidBigNumber n1 || invalidBigNumber n2 = error "Please introduce valid Big Numbers"
     | head n1 < 0 && head n2 < 0 = changeSign (somaBN (changeSign n1) (changeSign n2))
     | head n1 > 0 && head n2 < 0 =
         if equalOrBiggerBN n1 (changeSign n2) then somaBN' (reverse n1) (reverse n2) 0 []
@@ -77,10 +101,13 @@ equalOrBiggerBN n1 n2
     | otherwise = equalOrBiggerBN (tail n1) (tail n2)
     
 subBN ::BigNumber -> BigNumber -> BigNumber
-subBN n1 n2 = somaBN n1 (changeSign n2)
+subBN n1 n2
+    | invalidBigNumber n1 || invalidBigNumber n2 = error "Please introduce valid Big Numbers"
+    | otherwise = somaBN n1 (changeSign n2)
 
 multBN ::BigNumber -> BigNumber -> BigNumber
 multBN n1 n2 
+    | invalidBigNumber n1 || invalidBigNumber n2 = error "Please introduce valid Big Numbers"
     | head n1 > 0 && head n2 > 0 = multBN' n1 n2 [0]
     | head n1 < 0 && head n2 < 0 = multBN' (changeSign n1) (changeSign n2) [0]
     | head n1 > 0 && head n2 <0 = changeSign (multBN' n1 (changeSign n2) [0])
@@ -95,6 +122,7 @@ multBN' n1 n2 acc
 
 divBN :: BigNumber -> BigNumber -> (BigNumber, BigNumber)
 divBN dividend divisor 
+    | invalidBigNumber dividend || invalidBigNumber divisor = error "Please introduce valid Big Numbers"
     | divisor == [0] = error "it's not possible to divide a number by 0"
     | equalOrBiggerBN dividend divisor = divBN' dividend divisor divisor [1]
     | otherwise = ([0], dividend)
@@ -114,5 +142,7 @@ bnToInteger' n acc
 
 -- 5
 safeDivBN :: BigNumber -> BigNumber -> Maybe (BigNumber, BigNumber)
-safeDivBN x y | y == [0] =  Nothing
-              | otherwise = Just (divBN x y)
+safeDivBN dividend divisor 
+    | invalidBigNumber dividend || invalidBigNumber divisor = error "Please introduce valid Big Numbers"
+    | divisor == [0] =  Nothing
+    | otherwise = Just (divBN dividend divisor)
