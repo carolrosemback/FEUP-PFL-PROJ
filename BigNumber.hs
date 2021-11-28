@@ -2,7 +2,18 @@
 module BigNumber (BigNumber (..),
                   scanner,
                   output,
-                  changeSign) where
+                  changeSign,
+                  somaBN,
+                  somaBN',
+                  remove0,
+                  equalOrBiggerBN,
+                  subBN,
+                  multBN,
+                  multBN',
+                  divBN,
+                  divBN',
+                  bnToInteger,
+                  bnToInteger') where
 
 import Data.Char(digitToInt)
 type BigNumber = [Int]
@@ -27,10 +38,15 @@ output a
 --2.4
 somaBN :: BigNumber -> BigNumber -> BigNumber
 somaBN n1 n2
-    | head n1 > 0 && head n2 > 0 = somaBN' (reverse n1) (reverse n2) 0 []
     | head n1 < 0 && head n2 < 0 = changeSign (somaBN (changeSign n1) (changeSign n2))
-    | head n1 > 0 && head n2 < 0 && (equalOrBiggerBN (changeSign n2) n1) = changeSign(somaBN (changeSign n2) (changeSign n1))
-    | head n1 < 0 && head n2 > 0 && (equalOrBiggerBN (changeSign n1) n2) = changeSign(somaBN (changeSign n1) (changeSign n2))
+    | head n1 > 0 && head n2 < 0 =
+        if equalOrBiggerBN n1 (changeSign n2) then somaBN' (reverse n1) (reverse n2) 0 []
+            else 
+        changeSign (somaBN' (reverse (changeSign n1)) (reverse (changeSign n2)) 0 [])
+    | head n1 < 0 && head n2 > 0 =
+        if equalOrBiggerBN n2 (changeSign n1) then somaBN' (reverse n1) (reverse n2) 0 []
+            else 
+        changeSign (somaBN' (reverse (changeSign n1)) (reverse (changeSign n2)) 0 [])
     | otherwise = somaBN' (reverse n1) (reverse n2) 0 []
 
 somaBN' :: BigNumber -> BigNumber -> Int -> BigNumber -> BigNumber
@@ -75,6 +91,7 @@ multBN'::BigNumber -> BigNumber -> BigNumber ->BigNumber
 multBN' n1 n2 acc 
     | n2 == [0] = acc
     | n2 == [] = acc
+    | equalOrBiggerBN n2 n1 = multBN' n2 n1 acc
     | otherwise = multBN' n1 (somaBN n2 [-1]) (somaBN n1 acc)
 
 divBN :: BigNumber -> BigNumber -> (BigNumber, BigNumber)
@@ -88,24 +105,6 @@ divBN' dividend divisor acc quotient
     | head (subBN dividend (somaBN acc divisor)) < 0 = (quotient, (subBN dividend acc))
     | otherwise = divBN' dividend divisor (somaBN acc divisor) (somaBN quotient [1])
 
-fibRecBN :: BigNumber -> BigNumber
-fibRecBN n = fibRecBN' n [0] [1]
-
-fibRecBN' :: BigNumber -> BigNumber -> BigNumber -> BigNumber
-fibRecBN' n fib_2 fib_1
-    | n == [0] = fib_2
-    | n == [1] = fib_1
-    | otherwise = fibRecBN' (somaBN n [-1]) fib_1 (somaBN fib_2 fib_1)
-
-fibListaBN :: BigNumber -> BigNumber
-fibListaBN n = last (fibListaBN' n 1 [[0],[1]])
-
-fibListaBN':: BigNumber->Int->[BigNumber]->[BigNumber] 
-fibListaBN' n count lis
-    | head (subBN n [2]) < 0 = lis
-    | output n == show count = lis
-    | otherwise = fibListaBN' n (count + 1) (lis ++ [somaBN (lis!!count) (lis!!(count-1))])
-
 bnToInteger:: BigNumber -> Int
 bnToInteger n = bnToInteger' n 0
 
@@ -113,7 +112,3 @@ bnToInteger':: BigNumber -> Int->Int
 bnToInteger' n acc
     | length n == 0 = acc
     | otherwise = bnToInteger' (tail n) (10^(length n -1) * (head n) + acc)
-
-fibListaInfinitaBN :: BigNumber -> BigNumber
-fibListaInfinitaBN n = fibs!!(bnToInteger n)
-    where fibs = [0] : [1] : zipWith (somaBN) fibs (tail fibs)
