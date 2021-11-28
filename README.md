@@ -12,20 +12,20 @@ Implementação recursiva da sequência de Fibonacci. Trata-se de uma implementa
 
         Caso de teste: fibRec 10 -> 55  | Tempo de execução: 0.02s | 60,544 bytes
                        fibRec 50 -> 12586269025 | Tempo de execução: 0.01s  | 93,096 bytes
-                       fibRec 100 -> 190392490709135 | | Tempo de execução: 0.01s | 133,328 bytes
+                       fibRec 100 -> 354224848179261915075 | | Tempo de execução: 0.01s | 133,328 bytes
 * fibLista:  
 Implementação utilizando listas com base em programação dinâmica, em que há uma lista com resultados parciais, sendo mais eficiente do que a resolução recursiva do problema. Assim, só serão calculados os valores necessários para a sequência de Fibonacci.
 
-        Caso de teste : fibLista 10 -> 55 | Tempo de execução: 
-                        fibLista 50 -> 12586269025 | Tempo de execução: 
-                        fibLista 100 -> 190392490709135 | Tempo de execução:
+        Caso de teste : fibLista 10 -> 55 | Tempo de execução: 0.01 secs | 63,872 bytes
+                        fibLista 50 -> 12586269025 | Tempo de execução: 0.01 secs | 166,648 bytes
+                        fibLista 100 -> 354224848179261915075 | Tempo de execução: 0.01 secs | 420,760 bytes
 
 * fibListaInfinita:  
 Implementação utilizando lista infinita, a qual soma os os elementos da lista com a cauda, gerando uma lista com o resultado.
 
         Caso de teste: fibListaInfinita 10 -> 55 | Tempo de execução: 0.01s | 55,584 bytes
                        fibListaInfinita 50 -> 12586269025 | Tempo de execução: 0.01s | 67,008 bytes
-                       fibListaInfinita 100 -> 190392490709135 | Tempo de execução: 0.01s |  80,848 bytes
+                       fibListaInfinita 100 -> 354224848179261915075 | Tempo de execução: 0.01s |  80,848 bytes
 
 * fibRecBN:  
 Trata-se de uma versão de fibRec mas com aplicação para BigNumbers, utilizando a função importada do modulo BigNumber criado, somaBN.
@@ -37,9 +37,9 @@ Trata-se de uma versão de fibRec mas com aplicação para BigNumbers, utilizand
 * fibListaBN:  
 Trata-se de uma versão de fibLista mas com aplicação para BigNumbers, utilizando a função importada do modulo BigNumber criado, somaBN.
 
-        Caso de teste: fibListaBN [1,0] -> [5,5] | Tempo de execução:
-                       fibListaBN [5,0] -> [1,2,5,8,6,2,6,9,0,2,5] | Tempo de execução:
-                       fibListaBN [1,0,0] -> [3,5,4,2,2,4,8,4,8,1,7,9,2,6,1,9,1,5,0,7,5] | Tempo de execução:
+        Caso de teste: fibListaBN [1,0] -> [5,5] | Tempo de execução: 0.01 secs | 154,576 bytes
+                       fibListaBN [5,0] -> [1,2,5,8,6,2,6,9,0,2,5] | Tempo de execução: 0.01 secs | 908,488 bytes
+                       fibListaBN [1,0,0] -> [3,5,4,2,2,4,8,4,8,1,7,9,2,6,1,9,1,5,0,7,5] | Tempo de execução: 0.03 secs | 2,842,248 bytes
 
 * fibListaInfinitaBN:  
 Trata-se de uma versão de fibListaInfinita mas com aplicação para BigNumbers, utilizando a função importada do modulo BigNumber criado, somaBN.
